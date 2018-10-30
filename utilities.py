@@ -3,6 +3,8 @@ from enum import Flag
 from datetime import datetime
 
 
+# region testables
+
 class TestableDateTime(object):
     @classmethod
     def today(cls):
@@ -12,6 +14,11 @@ class TestableDateTime(object):
     def now(cls):
         return datetime.now()
 
+class _MockPWM_LED(object):
+    def __init__(self):
+        self.value = 0
+
+# endregion
 
 class Days(Flag):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
