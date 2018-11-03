@@ -1,6 +1,7 @@
 import math
 from enum import Flag
 from datetime import datetime
+import unittest
 
 
 # region testables
@@ -14,11 +15,14 @@ class TestableDateTime(object):
     def now(cls):
         return datetime.now()
 
+
 class _MockPWM_LED(object):
-    def __init__(self):
+    def __init__(self, pin):
         self.value = 0
+        self._pin = pin
 
 # endregion
+
 
 class Days(Flag):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
@@ -78,11 +82,10 @@ def normalize_time(hours, minutes):
 
 # endregion
 
-#region unit tests
-import unittest
+# region unit tests
 
 
-class TestConvertDateTimeToZeroBasedWeekday(unittest.TestCase):
+class _TestConvertDateTimeToZeroBasedWeekday(unittest.TestCase):
     """
     For reference:
     Original:
@@ -112,7 +115,7 @@ class TestConvertDateTimeToZeroBasedWeekday(unittest.TestCase):
         self.assertEqual(6, convert_datetime_weekday_to_zero_sunday(5))
 
 
-class TestDaysIncrementIncrementsAndWraps(unittest.TestCase):
+class _TestDaysIncrementIncrementsAndWraps(unittest.TestCase):
     def test_Sun_increments_to_Mon(self):
         self.assertEqual(Days.MONDAY, Days.increment(Days.SUNDAY))
 
@@ -123,7 +126,7 @@ class TestDaysIncrementIncrementsAndWraps(unittest.TestCase):
         self.assertEqual(Days.SUNDAY, Days.increment(Days.SATURDAY))
 
 
-class TestConvertZeroBasedWeekdayToDaysEnum(unittest.TestCase):
+class _TestConvertZeroBasedWeekdayToDaysEnum(unittest.TestCase):
     """
     For reference:
         Sun - 0
@@ -156,7 +159,7 @@ class TestConvertZeroBasedWeekdayToDaysEnum(unittest.TestCase):
         self.assertEqual(Days.SATURDAY, convert_weekday_to_days_flag(6))
 
 
-class TestConvertDaysFlagToWeekday(unittest.TestCase):
+class _TestConvertDaysFlagToWeekday(unittest.TestCase):
     def test_Sun_0(self):
         self.assertEqual(0, convert_days_flag_to_weekday(Days.SUNDAY))
 
@@ -166,7 +169,7 @@ class TestConvertDaysFlagToWeekday(unittest.TestCase):
     def test_Sat_6(self):
         self.assertEqual(6, convert_days_flag_to_weekday(Days.SATURDAY))
 
-#endregion
+# endregion
 
 
 if __name__ == '__main__':

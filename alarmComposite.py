@@ -4,6 +4,7 @@ from utilities import _MockPWM_LED, Days
 import unittest
 from unittest.mock import patch
 
+
 class AlarmComposite(object):
     def __init__(self):
         self.alarms = []
@@ -17,6 +18,10 @@ class AlarmComposite(object):
 
     def remove_alarm(self, alarm):
         self.alarms.remove(alarm)
+
+    @property
+    def active(self):
+        return any(alarm.active for alarm in self.alarms)
 
     @property
     def target_days(self):
@@ -72,7 +77,7 @@ class AlarmComposite(object):
         return nearest
 
 
-class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
+class _TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
     def test_empty_composite_yieldsNone(self):
         composite = AlarmComposite()
         self.assertEqual(Days.NONE, composite.target_days)
@@ -80,7 +85,7 @@ class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
     def test_single_yields_that(self):
         composite = AlarmComposite()
         led = _MockPWM_LED()
-        alarm = Alarm(led)
+        alarm = Alarm()
         composite.add_alarm(alarm)
         self.assertEqual(Days.NONE, composite.target_days)
 
@@ -104,8 +109,8 @@ class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
     def test_double_yields_or(self):
         composite = AlarmComposite()
         led = _MockPWM_LED()
-        alarm1 = Alarm(led)
-        alarm2 = Alarm(led)
+        alarm1 = Alarm()
+        alarm2 = Alarm()
         composite.add_alarms(alarm1, alarm2)
 
         alarm1.add_target_day(Days.MONDAY | Days.TUESDAY)
@@ -115,7 +120,7 @@ class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
         self.assertEqual(Days.MONDAY | Days.TUESDAY | Days.FRIDAY, composite.target_days)
 
 
-class TestTargetHourReturnsNearestHour(unittest.TestCase):
+class _TestTargetHourReturnsNearestHour(unittest.TestCase):
     def test_empty_composite_throws(self):
         composite = AlarmComposite()
         with self.assertRaises(Exception) as context:
@@ -125,7 +130,7 @@ class TestTargetHourReturnsNearestHour(unittest.TestCase):
     def test_single_yields_that(self):
         composite = AlarmComposite()
         led = _MockPWM_LED()
-        alarm = Alarm(led)
+        alarm = Alarm()
         composite.add_alarm(alarm)
         self.assertEqual(0, composite.target_hour)
 
@@ -138,9 +143,9 @@ class TestTargetHourReturnsNearestHour(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.ALL)
@@ -156,9 +161,9 @@ class TestTargetHourReturnsNearestHour(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.MONDAY)
@@ -170,7 +175,7 @@ class TestTargetHourReturnsNearestHour(unittest.TestCase):
             self.assertEqual(8, composite.target_hour)
 
 
-class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
+class _TestTargetMinuteReturnsNearestHour(unittest.TestCase):
     def test_empty_composite_throws(self):
         composite = AlarmComposite()
         with self.assertRaises(Exception) as context:
@@ -180,7 +185,7 @@ class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
     def test_single_yields_that(self):
         composite = AlarmComposite()
         led = _MockPWM_LED()
-        alarm = Alarm(led)
+        alarm = Alarm()
         composite.add_alarm(alarm)
         self.assertEqual(0, composite.target_minute)
 
@@ -193,9 +198,9 @@ class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.ALL)
@@ -211,9 +216,9 @@ class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.MONDAY)
@@ -227,7 +232,7 @@ class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
             self.assertEqual(30, composite.target_minute)
 
 
-class TestNexDayReturnsNearestNextDay(unittest.TestCase):
+class _TestNexDayReturnsNearestNextDay(unittest.TestCase):
     def test_empty_composite_throws(self):
         composite = AlarmComposite()
         with self.assertRaises(Exception) as context:
@@ -237,7 +242,7 @@ class TestNexDayReturnsNearestNextDay(unittest.TestCase):
     def test_single_yields_that(self):
         composite = AlarmComposite()
         led = _MockPWM_LED()
-        alarm = Alarm(led)
+        alarm = Alarm()
         composite.add_alarm(alarm)
         alarm.add_target_day(Days.MONDAY)
 
@@ -248,9 +253,9 @@ class TestNexDayReturnsNearestNextDay(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.FRIDAY)
@@ -263,9 +268,9 @@ class TestNexDayReturnsNearestNextDay(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.MONDAY)
@@ -279,7 +284,7 @@ class TestNexDayReturnsNearestNextDay(unittest.TestCase):
             self.assertEqual(Days.MONDAY, composite.next_day)
 
 
-class TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
+class _TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
     def test_empty_composite_throws(self):
         composite = AlarmComposite()
         self.assertEqual(0, composite.get_desired_brightness())
@@ -290,8 +295,8 @@ class TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
 
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm = Alarm(led)
+
+            alarm = Alarm()
             composite.add_alarm(alarm)
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
@@ -304,9 +309,8 @@ class TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.FRIDAY)
@@ -323,9 +327,9 @@ class TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             composite = AlarmComposite()
-            led = _MockPWM_LED()
-            alarm1 = Alarm(led)
-            alarm2 = Alarm(led)
+
+            alarm1 = Alarm()
+            alarm2 = Alarm()
             composite.add_alarms(alarm1, alarm2)
 
             alarm1.add_target_day(Days.SUNDAY)

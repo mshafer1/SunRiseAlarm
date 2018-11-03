@@ -13,13 +13,12 @@ from datetime import datetime, timedelta, time
 
 
 class Alarm(object):
-    def __init__(self, PWM_LED):
+    def __init__(self):
         self._value = 0
-        self._led = PWM_LED
         self.target_days = utilities.Days.NONE
         self.target_hour = 0
         self.target_minute = 0
-        self.active = False
+        self.active = True
 
     def add_target_day(self, day):
         self.target_days |= day
@@ -73,16 +72,14 @@ class Alarm(object):
             return target_day
         raise Exception("Could not find next target day.")
 
-    def set_brightness(self, percent):
-        if percent < 0 or percent > 100:
-            raise Exception('Value must be between 0 and 100 (inclusively)')
-        self._value = percent
-        self._led.value = Alarm._scale(self._value)
-
-    def set(self):
-        self.set_brightness(self.get_desired_brightness())
-
     def get_desired_brightness(self):
+        '''
+
+        :return: desired brightness [0,100]
+        '''
+        if not self.active:
+            return 0
+
         time = utilities.TestableDateTime.now()
         time_delta = self.target_datetime - time
 
@@ -125,10 +122,6 @@ class Alarm(object):
         return target
 
     @property
-    def value(self):
-        return self._led.value
-
-    @property
     def alarm_passed_today(self):
         today = utilities.TestableDateTime.now().weekday()
         today = utilities.convert_datetime_weekday_to_zero_sunday(today)
@@ -139,20 +132,10 @@ class Alarm(object):
             return this_time > time(self.target_hour, self.target_minute)
         return False
 
-    @classmethod
-    def _scale(cls, percent):
-        # this is a scaling based on desired percentage to 8 bit power for linear brightness
-        eight_bit_val = (.0127 * percent ** 2 + 1.3027 * percent ) // 1.0089
-
-        # scale to [0,1]
-        return eight_bit_val / 255
-
-
-
 
 class _TestAlarmAddOrRemoveDays(unittest.TestCase):
     def test_setDay(self):
-        alarm = Alarm(utilities._MockPWM_LED())
+        alarm = Alarm()
         self.assertEqual(Days.NONE, alarm.target_days)
 
         for day in Days:
@@ -167,7 +150,7 @@ class _TestAlarmAddOrRemoveDays(unittest.TestCase):
             alarm.target_days = Days.NONE
 
     def test_addDay(self):
-        alarm = Alarm(utilities._MockPWM_LED())
+        alarm = Alarm()
         self.assertEqual(Days.NONE, alarm.target_days)
 
         for day in Days:
@@ -178,7 +161,7 @@ class _TestAlarmAddOrRemoveDays(unittest.TestCase):
                 self.assertNotEqual(Days.NONE, alarm.target_days)
 
     def test_removeDay(self):
-        alarm = Alarm(utilities._MockPWM_LED())
+        alarm = Alarm()
         alarm.add_target_day(Days.ALL)
         self.assertEqual(Days.ALL, alarm.target_days)
 
@@ -211,7 +194,7 @@ class _TestAlarmGetNextDay(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 0, 0)  # midnight, Sunday, Jan 1st, 2006
 
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -223,7 +206,7 @@ class _TestAlarmGetNextDay(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 30)  # 6:30, Sunday, Jan 1st, 2006
 
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.add_target_day(Days.MONDAY)
             alarm.target_hour = 6
@@ -236,7 +219,7 @@ class _TestAlarmGetNextDay(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 2, 6, 30)  # 6:30, Monday, Jan 2nd, 2006
 
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.add_target_day(Days.MONDAY)
             alarm.target_hour = 6
@@ -250,7 +233,7 @@ class _TestAlarmGetTargetDateTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 5, 29)  # 5:29, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -267,7 +250,7 @@ class _TestAlarmGetTargetDateTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -282,7 +265,7 @@ class _TestAlarmGetTargetDateTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.MONDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -297,7 +280,7 @@ class _TestAlarmGetTargetDateTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 3, 0, 0)  # midnight, Tuesday, Jan 3rd, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -313,7 +296,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = config.wakeup_time + 1
@@ -324,7 +307,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = config.wakeup_time - 1
@@ -337,7 +320,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
 
             hour, minute = utilities.normalize_time(6, 1)
@@ -353,7 +336,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
@@ -365,7 +348,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time - 1)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
 
             alarm.target_hour = 6
@@ -378,7 +361,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
 
             alarm.target_hour = 6
@@ -391,7 +374,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         with patch('utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.FRIDAY)
 
             alarm.target_hour = 6
@@ -403,7 +386,7 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
         from datetime import datetime
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 6th, 2006
-            alarm = Alarm(utilities._MockPWM_LED())
+            alarm = Alarm()
             alarm.add_target_day(Days.FRIDAY)
 
             alarm.target_hour = 6
@@ -412,30 +395,20 @@ class _TestGradualFadeUpOnTime(unittest.TestCase):
             self.assertEqual(0, alarm.get_desired_brightness())
 
 
-class _TestAlarmSetConfiguresLED(unittest.TestCase):
-    def test_Alarm_Set_LED_On_Full(self):
-        led = utilities._MockPWM_LED()
+class _TestAlarmDisabledStaysOff(unittest.TestCase):
+    def test_AlarmThatIsDisabledStaysAtValueZero(self):
         with patch('utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(led)
+            alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
             alarm.target_hour = 6
             alarm.target_minute = 0
+            alarm.active = False
 
-            alarm.set()
-            self.assertEqual(1, led.value)
+            self.assertEqual(0, alarm.get_desired_brightness())
 
-    def test_Alarm_set_LED_off(self):
-        from datetime import datetime
-        led = utilities._MockPWM_LED()
-        with patch('utilities.TestableDateTime') as mock_date:
-            mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            alarm = Alarm(led)
-            alarm.add_target_day(Days.SUNDAY)
-            alarm.target_hour = 6
-            alarm.target_minute = config.wakeup_time + 1
-
-            self.assertEqual(0, led.value)
+            alarm.active = True
+            self.assertEqual(100, alarm.get_desired_brightness())
 
 
 if __name__ == '__main__':

@@ -8,5 +8,9 @@ setup(name='SunRiseAlarm',
       author='mshafer1',
       author_email='',
       url='https://github.com/mshafer1/SunRiseAlarm',
-      requires=['gpiozero>=1.4.1']
+      requires= [
+            'gpiozero>=1.4.1',
+            'tinydb>=3.11.1',
+            'pytest>=3.9.3'
+      ]
      )
