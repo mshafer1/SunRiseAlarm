@@ -13,12 +13,14 @@ from datetime import datetime, timedelta, time
 
 
 class Alarm(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._value = 0
         self.target_days = utilities.Days.NONE
         self.target_hour = 0
         self.target_minute = 0
         self.active = True
+        for key in kwargs:
+            self.__dict__[key] = kwargs[key]
 
     def add_target_day(self, day):
         self.target_days |= day
@@ -40,6 +42,7 @@ class Alarm(object):
             raise Exception('Minutes must be between 0 and 59 (inclusively)')
         self.target_hour = hour
         self.target_minute = minute
+
 
     @property
     def next_day(self):

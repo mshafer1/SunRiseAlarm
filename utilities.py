@@ -2,7 +2,8 @@ import math
 from enum import Flag
 from datetime import datetime
 import unittest
-
+import json
+import uuid
 
 # region testables
 
@@ -24,6 +25,24 @@ class _MockPWM_LED(object):
 # endregion
 
 
+# from https://stackoverflow.com/a/6579139/8100990
+def object_decoder(obj):
+    if '__type__' in obj and obj['__type__'] == 'Days':
+        return Days(obj['value'])
+    return obj
+
+# from: https://stackoverflow.com/a/48159596/8100990
+class SpecialEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, uuid.UUID):
+            # if the obj is uuid, we simply return the value of uuid
+            return obj.hex
+        elif isinstance(obj, Days):
+            return json.dumps({'__type__': 'Days', 'value': obj.value})
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
 class Days(Flag):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
     SUNDAY = 64
@@ -40,6 +59,12 @@ class Days(Flag):
         day_base_value = int(math.log(object.value, 2))
         next_day_base_value = (day_base_value - 1)%7
         return Days(math.pow(2, next_day_base_value))
+
+    def __repr__(self):
+        return self.value
+
+    def __str__(self):
+        return self.value
 
 
 # region methods
