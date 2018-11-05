@@ -1,9 +1,6 @@
 import copy
-import uuid
 from tinydb import TinyDB, Query
-import unittest
-import os.path
-import sys
+from tinydb_serialization import SerializationMiddleware
 
 from alarm import Alarm
 import utilities
@@ -18,9 +15,9 @@ class DB(object):
         self.db.close()
 
     def _open(self):
-        self.db = TinyDB(self.__db_path, indent=4,
-                         cls=utilities.SpecialEncoder #, object_hook=utilities.object_decoder
-                         )
+        serialization = SerializationMiddleware()
+        serialization.register_serializer(utilities.DaysSerializer, 'Days')
+        self.db = TinyDB(self.__db_path, indent=4, storage=serialization)
         self.table = self.db.table('Alarms')
 
     def add_alarm(self, alarm):
@@ -83,95 +80,3 @@ class DBAlarm(Alarm):
             value = hash(value) # keep hashing till we find one
             cls.ids.append(value)
         return value
-
-
-
-tests_cleanup_after = True
-tests_cleanup_before = False
-
-
-class _DBTest_setup(unittest.TestCase):
-    db_name = 'test_db.json'
-
-    def setUp(self):
-        if tests_cleanup_before:
-            self._cleanup()
-        self.db = DB(_TestDBCanStoreAlarm.db_name)
-
-    def tearDown(self):
-        self.db._close()
-        self.db = None
-        if tests_cleanup_after:
-            self._cleanup()
-
-    @staticmethod
-    def _cleanup():
-        if os.path.isfile(_TestDBCanStoreAlarm.db_name):
-            os.remove(_TestDBCanStoreAlarm.db_name)
-
-
-class _TestDBCanStoreAlarm(_DBTest_setup):
-    def test_testDBSingleInsertionBasicAlarm(self):
-        alarm = Alarm()
-        alarm.target_days = utilities.Days.MONDAY
-        self.db.add_alarm(alarm)
-
-    def test_testDBDoubleInsertionSameAlarmUpdatesBasicAlarm(self):
-        alarm = Alarm()
-        alarm.target_days = utilities.Days.MONDAY
-        self.db.add_alarm(alarm)
-
-        self.db.add_alarm(alarm)
-        self.assertEqual(len(self.db.get_alarms()), 1)
-
-    def test_testDBDoubleInsertionDifferentAlarmAddsAlarm(self):
-        alarm = Alarm()
-        alarm.target_days = utilities.Days.MONDAY
-        self.db.add_alarm(alarm)
-
-        alarm2 = Alarm()
-        self.db.add_alarm(alarm2)
-        self.assertEqual(len(self.db.get_alarms()), 2)
-
-
-class _TestCanReloadAlarms(_DBTest_setup):
-    def test_testDBSingleCanReload(self):
-        alarm = Alarm()
-        alarm.target_days = utilities.Days.MONDAY | utilities.Days.FRIDAY
-        alarm.target_hour = 6
-        alarm.target_minute = 5
-
-        self.db.add_alarm(alarm)
-        self.db._close()
-        self.db._open()
-
-        self.assertEqual(len(self.db.get_alarms()), 1)
-        alarm = self.db.get_alarms()[0]
-        self.assertEqual(alarm.target_days, utilities.Days.MONDAY | utilities.Days.FRIDAY)
-        self.assertEqual(alarm.target_hour, 6)
-        self.assertEqual(alarm.target_minute, 5)
-
-
-
-
-
-def _parse_args():
-    global tests_cleanup_after, tests_cleanup_before
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dirty', default=False, action='store_true')
-    parser.add_argument('--before', default=False, action='store_true')
-    ns, args = parser.parse_known_args(namespace=unittest)
-
-    tests_cleanup_after = ns.dirty
-    tests_cleanup_before = ns.before
-
-    return ns, sys.argv[:1] + args
-
-
-if __name__ == "__main__":
-    ns, remaining_args = _parse_args()
-
-    # this invokes unittest when leveltest invoked with -m flag like:
-    #    python -m leveltest --level=2 discover --verbose
-    unittest.main(argv=remaining_args)

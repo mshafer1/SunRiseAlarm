@@ -4,6 +4,7 @@ from datetime import datetime
 import unittest
 import json
 import uuid
+from tinydb_serialization import Serializer
 
 # region testables
 
@@ -24,12 +25,6 @@ class _MockPWM_LED(object):
 
 # endregion
 
-
-# from https://stackoverflow.com/a/6579139/8100990
-def object_decoder(obj):
-    if '__type__' in obj and obj['__type__'] == 'Days':
-        return Days(obj['value'])
-    return obj
 
 # from: https://stackoverflow.com/a/48159596/8100990
 class SpecialEncoder(json.JSONEncoder):
@@ -60,11 +55,17 @@ class Days(Flag):
         next_day_base_value = (day_base_value - 1)%7
         return Days(math.pow(2, next_day_base_value))
 
-    def __repr__(self):
-        return self.value
 
-    def __str__(self):
-        return self.value
+class DaysSerializer(Serializer):
+    OBJ_CLASS = Days
+
+    @staticmethod
+    def encode(obj):
+        return str(obj.value)
+
+    @staticmethod
+    def decode(s):
+        return Days(int(s))
 
 
 # region methods
@@ -193,7 +194,7 @@ class _TestConvertDaysFlagToWeekday(unittest.TestCase):
 
     def test_Sat_6(self):
         self.assertEqual(6, convert_days_flag_to_weekday(Days.SATURDAY))
-
+    # can it handle multiple days??
 # endregion
 
 
