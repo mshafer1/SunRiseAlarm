@@ -20,8 +20,17 @@ class TestableDateTime(object):
 
 class _MockPWM_LED(object):
     def __init__(self, pin):
-        self.value = 0
+        self._value = 0
         self._pin = pin
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, input):
+        self._value = input
+        return self._value
 
 # endregion
 

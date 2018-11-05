@@ -40,7 +40,10 @@ class LEDController(object):
         eight_bit_val = (.0127 * percent ** 2 + 1.3027 * percent ) // 1.0089
 
         # scale to [0,1]
-        return eight_bit_val / 255
+        scaled = eight_bit_val / 255
+        scaled = max(0, scaled) # remove negatives
+        scaled = min(255, scaled) # remove high
+        return scaled
 
     @classmethod
     def _inverse_scale(cls, raw):
