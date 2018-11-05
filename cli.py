@@ -23,13 +23,13 @@ def menu(menu_actions):
 
         for i, item in enumerate(keys):
             print(f"{i+1}: {item}")
-        response = input(f"Select value [1-{len(menu_actions.keys())}]: ")
+        response = input("Select value [1-{0}]: ".format(len(menu_actions.keys())))
         converted = int(response) - 1
         if 0 <= converted < valid_max:
             menu_actions[keys[converted]]()
         else:
             clear_screen()
-            print(f"Invalid entry, please enter an integer value between 1 and {valid_max}")
+            print("Invalid entry, please enter an integer value between 1 and {0}".format(valid_max))
 
 def add_alarm():
     db = DB('alarms.json')
