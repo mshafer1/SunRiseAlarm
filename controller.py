@@ -17,7 +17,9 @@ def _main():
 
     while True:
         # TODO: handle updates from server (as is, needs to be restarted).
-        led.value = alarms.get_desired_brightness()
+        brightness = alarms.get_desired_brightness()
+        led.value = brightness
+        print("Setting brightness to: {0}".format(brightness))
         time.sleep(1)
 
 
