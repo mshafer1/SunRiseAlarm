@@ -22,7 +22,7 @@ def menu(menu_actions):
     while True:
 
         for i, item in enumerate(keys):
-            print(f"{i+1}: {item}")
+            print("{0}: {1}".format(i + 1, item))
         response = input("Select value [1-{0}]: ".format(len(menu_actions.keys())))
         converted = int(response) - 1
         if 0 <= converted < valid_max:
