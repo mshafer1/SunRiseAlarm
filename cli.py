@@ -7,6 +7,7 @@ on_windows = 'linux' not in sys.platform
 
 from database import DB
 from alarm import Alarm
+from viewModel import ViewModel
 
 
 def clear_screen():
@@ -46,10 +47,28 @@ def quit():
     sys.exit(0)
 
 
+class QuitException(Exception):
+    pass
+
+
 if __name__ == '__main__':
     menu_items = {
         "Add Alarm": add_alarm,
         "Quit": quit,
     }
-    while True:
-        menu(menu_items)
+    done = False
+    while not done:
+        try:
+            menu(menu_items)
+        except QuitException:
+            done = True
+
+    try:
+        vm = ViewModel()
+
+        while True:
+            pass
+    except KeyboardInterrupt:
+        vm.__del__()
+        raise
+
