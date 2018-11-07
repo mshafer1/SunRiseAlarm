@@ -44,7 +44,7 @@ def change_alarm():
 
 
 def quit():
-    sys.exit(0)
+    raise QuitException()
 
 
 class QuitException(Exception):
