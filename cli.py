@@ -5,8 +5,9 @@ import sys
 on_windows = 'linux' not in sys.platform
 
 
-from database import DB, DBAlarm
+from database import DB
 from alarm import Alarm
+
 
 def clear_screen():
     command = 'clear'
@@ -31,12 +32,15 @@ def menu(menu_actions):
             clear_screen()
             print("Invalid entry, please enter an integer value between 1 and {0}".format(valid_max))
 
+
 def add_alarm():
     db = DB('alarms.json')
     db.add_alarm(Alarm())
 
+
 def change_alarm():
     print("Change alarm")
+
 
 def quit():
     sys.exit(0)
