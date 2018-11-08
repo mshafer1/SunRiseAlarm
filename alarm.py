@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, time
 class Alarm(object):
     def __init__(self, **kwargs):
         self._value = 0
-        self.target_days = utilities.Days.NONE
+        self.target_days = utilities.Days(0)
         self.target_hour = 0
         self.target_minute = 0
         self.active = True
@@ -50,7 +50,7 @@ class Alarm(object):
         Get the next target day as a Day enum
         :return: Day enum
         """
-        if self.target_days == utilities.Days.NONE:
+        if self.target_days == utilities.Days(0):
             raise Exception("No time set")
 
         # get current date time
@@ -61,7 +61,7 @@ class Alarm(object):
         today_as_days_flag = utilities.convert_weekday_to_days_flag(today)
 
         # evaluate next target day (if today is a target day, include if not past alarm time)
-        if self.target_days & today_as_days_flag is not utilities.Days.NONE:
+        if today_as_days_flag in self.target_days:
             if now.hour < self.target_hour or now.hour == self.target_hour and now.minute <= self.target_minute:
                 return today_as_days_flag
 
@@ -130,7 +130,7 @@ class Alarm(object):
         today = utilities.convert_datetime_weekday_to_zero_sunday(today)
         today = utilities.convert_weekday_to_days_flag(today)
 
-        if today & self.target_days != Days.NONE:
+        if today & self.target_days != Days(0):
             this_time = utilities.TestableDateTime.now().time()
             return this_time > time(self.target_hour, self.target_minute)
         return False
@@ -139,29 +139,29 @@ class Alarm(object):
 class _TestAlarmAddOrRemoveDays(unittest.TestCase):
     def test_setDay(self):
         alarm = Alarm()
-        self.assertEqual(Days.NONE, alarm.target_days)
+        self.assertEqual(Days(0), alarm.target_days)
 
         for day in Days:
             alarm.add_target_day(day)
-            if day is Days.NONE:
-                self.assertEqual(Days.NONE, alarm.target_days)
+            if day is Days(0):
+                self.assertEqual(Days(0), alarm.target_days)
             else:
-                self.assertNotEqual(Days.NONE, alarm.target_days)
+                self.assertNotEqual(Days(0), alarm.target_days)
             self.assertEqual(day, alarm.target_days)
 
             # reset
-            alarm.target_days = Days.NONE
+            alarm.target_days = Days(0)
 
     def test_addDay(self):
         alarm = Alarm()
-        self.assertEqual(Days.NONE, alarm.target_days)
+        self.assertEqual(Days(0), alarm.target_days)
 
         for day in Days:
             alarm.add_target_day(day)
 
             self.assertEqual(day, alarm.target_days & day)  # check it got set
-            if day is not Days.NONE:
-                self.assertNotEqual(Days.NONE, alarm.target_days)
+            if day is not Days(0):
+                self.assertNotEqual(Days(0), alarm.target_days)
 
     def test_removeDay(self):
         alarm = Alarm()
@@ -169,12 +169,12 @@ class _TestAlarmAddOrRemoveDays(unittest.TestCase):
         self.assertEqual(Days.ALL, alarm.target_days)
 
         for day in Days:
-            if day is Days.NONE:
+            if day is Days(0):
                 alarm.remove_target_day(day)
                 self.assertEqual(Days.ALL, alarm.target_days)  # assert removing days that aren't there is a noop
             else:
                 alarm.remove_target_day(day)
-                self.assertEqual(Days.NONE, alarm.target_days & day)  # assert that day flag is not set anymore
+                self.assertEqual(Days(0), alarm.target_days & day)  # assert that day flag is not set anymore
 
             # reset it
             alarm.add_target_day(Days.ALL)

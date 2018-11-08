@@ -1,5 +1,5 @@
 import math
-from enum import Flag
+from flags import Flags
 from datetime import datetime
 import unittest
 import json
@@ -47,7 +47,7 @@ class SpecialEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
-class Days(Flag):
+class Days(Flags):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
     SUNDAY = 64
     MONDAY = 32
@@ -56,13 +56,13 @@ class Days(Flag):
     THURSDAY = 4
     FRIDAY = 2
     SATURDAY = 1
-    NONE = 0
+
 
     @classmethod
     def increment(cls, object):
-        day_base_value = int(math.log(object.value, 2))
+        day_base_value = int(math.log(int(object), 2))
         next_day_base_value = (day_base_value - 1)%7
-        return Days(math.pow(2, next_day_base_value))
+        return Days(int(math.pow(2, next_day_base_value)))
 
 
 class DaysSerializer(Serializer):
@@ -70,7 +70,7 @@ class DaysSerializer(Serializer):
 
     @staticmethod
     def encode(obj):
-        return str(obj.value)
+        return str(int(obj))
 
     @staticmethod
     def decode(s):
@@ -102,7 +102,7 @@ def convert_days_flag_to_weekday(day):
     :param day: Days flag
     :return: weekday (Sun = 0, Sat = 6)
     """
-    inverted_value = 6 - int(math.log(day.value, 2))
+    inverted_value = 6 - int(math.log(int(day), 2))
     return inverted_value
 
 
