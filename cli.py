@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import os
 
 import sys
@@ -56,18 +56,11 @@ if __name__ == '__main__':
         "Add Alarm": add_alarm,
         "Quit": quit,
     }
-    done = False
-    while not done:
-        try:
-            menu(menu_items)
-        except QuitException:
-            done = True
-
     try:
         vm = ViewModel()
 
         while True:
-            pass
+            menu(menu_items)
     except KeyboardInterrupt:
         vm.__del__()
         raise

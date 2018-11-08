@@ -1,5 +1,6 @@
 import database
 import alarmComposite
+from alarm import Alarm
 
 import LEDController
 import time
@@ -17,10 +18,16 @@ class ViewModel(object):
 
         self._timer = RepeatedTimer(1, self._set_brightness)
 
+    def add_alarm(self):
+        alarm = Alarm()
+        self.db.add_alarm(alarm)
+        self.alarms.add_alarm(alarm)
+        # TODO: return db ID for alarm.
+
     def _set_brightness(self):
         brightness = self.alarms.get_desired_brightness()
         self.led.value = brightness
-        print("Setting brightness to: {0}".format(brightness))
+        # print("Setting brightness to: {0}".format(brightness))
         time.sleep(1)
 
     def __del__(self):
@@ -33,8 +40,6 @@ def _main():
 
     while True:
         pass
-
-
 
 if __name__ == '__main__':
     _main()
