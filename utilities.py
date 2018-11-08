@@ -6,6 +6,7 @@ import json
 import uuid
 from tinydb_serialization import Serializer
 
+
 # region testables
 
 class TestableDateTime(object):
@@ -35,18 +36,6 @@ class _MockPWM_LED(object):
 # endregion
 
 
-# from: https://stackoverflow.com/a/48159596/8100990
-class SpecialEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, uuid.UUID):
-            # if the obj is uuid, we simply return the value of uuid
-            return obj.hex
-        elif isinstance(obj, Days):
-            return json.dumps({'__type__': 'Days', 'value': obj.value})
-        else:
-            return json.JSONEncoder.default(self, obj)
-
-
 class Days(Flags):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
     SUNDAY = 64
@@ -56,7 +45,6 @@ class Days(Flags):
     THURSDAY = 4
     FRIDAY = 2
     SATURDAY = 1
-
 
     @classmethod
     def increment(cls, object):

@@ -76,10 +76,10 @@ class Alarm(object):
         raise Exception("Could not find next target day.")
 
     def get_desired_brightness(self):
-        '''
+        """
 
         :return: desired brightness [0,100]
-        '''
+        """
         if not self.active:
             return 0
 
