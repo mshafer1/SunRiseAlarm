@@ -9,11 +9,11 @@ setup(name='SunRiseAlarm',
       author_email='',
       url='https://github.com/mshafer1/SunRiseAlarm',
       requires=[
-          'gpiozero>=1.4.1',
-          'tinydb>=3.11.1',
-          'pytest>=3.9.3',
-          'tinydb-serialization>=1.0.4',
-          'mako>=1.0.7',
-          'py-flags>=1.1.2'
+          'gpiozero',
+          'tinydb>3.11',
+          'pytest>3.9',
+          'tinydb-serialization>1.0',
+          'mako>1.0',
+          'py-flags>1.1'
       ]
       )

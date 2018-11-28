@@ -1,6 +1,6 @@
 from alarm import Alarm
 
-from utilities import _MockPWM_LED, Days
+from utilities import Days
 import unittest
 from unittest.mock import patch
 

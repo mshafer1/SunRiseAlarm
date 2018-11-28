@@ -2,6 +2,12 @@
 Raspberry PI based sunrise alarm clock
 
 ## Requires
-|Item | Reason| Setup Instruction |
-|---|---| --- |
-|Python 3.7 | Use of enum.Flag | [Github Gist](https://gist.github.com/SeppPenner/6a5a30ebc8f79936fa136c524417761d#file-installing-python-3-7-0-on-raspbian-rst)|
+|       Item    |       Reason      |   Setup Instruction   |
+|   ---         |       ---         |           ---         |
+|gpiozero       | GPIO output | (should be already installed)|
+| tinydb        | Configuration storage|    `pip install tinydb`|
+| tinydb-serialization | Serializing enums for config |    `pip install tinydb-serialization`|
+| mako        | Web Server pages |    `pip install mako`|
+| py-flags        | Python 3.5 compatible flags enum |    `pip install py-flags`|
+| pytest        | Unit testing |    `pip install pytest`|
+
