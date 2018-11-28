@@ -21,7 +21,7 @@ class LEDController(object):
         self.value_raw = 0
 
     def __del__(self):
-        self.value_raw = 0
+        # self.value_raw = 0
         self._pi.stop()
 
     @property
