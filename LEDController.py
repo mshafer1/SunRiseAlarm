@@ -10,34 +10,38 @@ if 'Windows' in value:
     PWMLED = utilities._MockPWM_LED
 
 else:
-    from gpiozero import PWMLED
+    #from gpiozero import PWMLED
+    import pigpio
 
 
 class LEDController(object):
     def __init__(self):
-        self._led = PWMLED(config.LED_pin)
-        self._led.value = 0
-        self._led.frequency = 1000
+        self._pi = pigpio.pi()
+        #self._led = PWMLED(config.LED_pin)
+        #self._led.value = 0
+        #self._led.frequency = 1000
 
     def __del__(self):
-        self._led.close()
-        self._led = None
+        self.value_raw = 0
+        self._pi.stop()
+        #self._led.close()
+        #self._led = None
 
     @property
     def value_raw(self):
-        return self._led.value
+        return self._pi.read(config.LED_pin)
 
     @value_raw.setter
     def value_raw(self, value):
-        self._led.value = value
+        self._pi.set_PWM_dutycycle(config.LED_pin, value)
 
     @property
     def value(self):
-        return LEDController._inverse_scale(self._led.value)
+        return LEDController._inverse_scale(self.value_raw)
 
     @value.setter
     def value(self, input):
-        self._led.value = LEDController._scale(input)
+        self.value_raw = LEDController._scale(input)
 
     @classmethod
     def _scale(cls, percent):
@@ -45,7 +49,6 @@ class LEDController(object):
         eight_bit_val = (.0127 * percent ** 2 + 1.3027 * percent ) // 1.0089
 
         # scale to [0,1]
-        scaled = eight_bit_val / 255
         scaled = max(0, scaled) # remove negatives
         scaled = min(255, scaled) # remove high
         return scaled
