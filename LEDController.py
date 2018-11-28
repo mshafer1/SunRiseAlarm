@@ -17,6 +17,11 @@ class LEDController(object):
     def __init__(self):
         self._led = PWMLED(config.LED_pin)
         self._led.value = 0
+        self._led.frequency = 1000
+
+    def __del__(self):
+        self._led.close()
+        self._led = None
 
     @property
     def value_raw(self):
