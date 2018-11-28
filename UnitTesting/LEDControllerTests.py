@@ -15,20 +15,11 @@ test_output_percentages = [0, 1, 20, 79, 85, 90, 95, 99, 100]
 
 
 @pytest.mark.parametrize("value", test_output_percentages)
-def test_scale_inverses_to_same_ish_value(value):
-    scaled = LEDController._scale(value)
-    inverse = LEDController._inverse_scale(scaled)
-
-    # functionally equivalent: abs(value - inverse) <= margin_of_error;
-    #  however, it is expected that this will be easier to debug
-    assert value - margin_of_error <= inverse <= value + margin_of_error
-
-
-@pytest.mark.parametrize("value", test_output_percentages)
 def test_scale_yields_reasonable_values(value):
     scaled = LEDController._scale(value)
     logger.debug("Scaled: " + str(scaled))
-    assert 0 <= scaled <= 1
+    assert 0 <= scaled <= 255
+
 
 @pytest.mark.parametrize("value", test_output_percentages)
 def test_led_controller_sets_led(value):
@@ -38,7 +29,6 @@ def test_led_controller_sets_led(value):
     controller.value = value
 
     assert expected == controller.value_raw
-    assert expected == controller._led.value
 
 
 if __name__ == '__main__':

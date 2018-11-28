@@ -16,7 +16,7 @@ class DBTest_setup(unittest.TestCase):
     def setUp(self):
         if tests_cleanup_before:
             self._cleanup()
-        self.db = DB(_TestDBCanStoreAlarm.db_name)
+        self.db = DB(TestDBCanStoreAlarm.db_name)
 
     def tearDown(self):
         self.db._close()
@@ -26,17 +26,17 @@ class DBTest_setup(unittest.TestCase):
 
     @staticmethod
     def _cleanup():
-        if os.path.isfile(_TestDBCanStoreAlarm.db_name):
-            os.remove(_TestDBCanStoreAlarm.db_name)
+        if os.path.isfile(TestDBCanStoreAlarm.db_name):
+            os.remove(TestDBCanStoreAlarm.db_name)
 
 
-class _TestDBCanStoreAlarm(DBTest_setup):
-    def test_testDBSingleInsertionBasicAlarm(self):
+class TestDBCanStoreAlarm(DBTest_setup):
+    def testTestDBSingleInsertionBasicAlarm(self):
         alarm = Alarm()
         alarm.target_days = utilities.Days.MONDAY
         self.db.add_alarm(alarm)
 
-    def test_testDBDoubleInsertionSameAlarmUpdatesBasicAlarm(self):
+    def testTestDBDoubleInsertionSameAlarmUpdatesBasicAlarm(self):
         alarm = Alarm()
         alarm.target_days = utilities.Days.MONDAY
         self.db.add_alarm(alarm)
@@ -44,7 +44,7 @@ class _TestDBCanStoreAlarm(DBTest_setup):
         self.db.add_alarm(alarm)
         self.assertEqual(len(self.db.get_alarms()), 1)
 
-    def test_testDBDoubleInsertionDifferentAlarmAddsAlarm(self):
+    def testTestDBDoubleInsertionDifferentAlarmAddsAlarm(self):
         alarm = Alarm()
         alarm.target_days = utilities.Days.MONDAY
         self.db.add_alarm(alarm)
@@ -54,8 +54,8 @@ class _TestDBCanStoreAlarm(DBTest_setup):
         self.assertEqual(len(self.db.get_alarms()), 2)
 
 
-class _TestCanReloadAlarms(DBTest_setup):
-    def test_testDBSingleCanReload(self):
+class TestCanReloadAlarms(DBTest_setup):
+    def testTestDBSingleCanReload(self):
         alarm = Alarm()
         alarm.target_days = utilities.Days.MONDAY | utilities.Days.FRIDAY
         alarm.target_hour = 6
