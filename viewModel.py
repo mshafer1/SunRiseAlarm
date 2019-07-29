@@ -31,6 +31,7 @@ class ViewModel(object):
         time.sleep(1)
 
     def __del__(self):
+        self.led.value = 0
         self._timer.stop()
 
 

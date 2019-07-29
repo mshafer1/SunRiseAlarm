@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
         while True:
             menu(menu_items)
-    except KeyboardInterrupt:
+    except:
         vm.__del__()
         raise
 
