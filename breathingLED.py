@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 # import RPi.GPIO as GPIO
-import pigpio as GPIOLib
+# import pigpio as GPIOLib
 import time
+from LEDController import LEDController
 
-_pi = GPIOLib.pi()
-LedPin = 18 # physical pin 12 on RasPi-0w
+l = LEDController()
+
+# _pi = GPIOLib.pi()
+# LedPin = 18 # physical pin 12 on RasPi-0w
 StepDelay = .1
 
 def _write(value):
-    _pi.set_PWM_dutycycle(LedPin, value)
+    l.value_raw = value
 
 
 
@@ -35,7 +38,7 @@ try:
                 time.sleep(.25)
 except KeyboardInterrupt:
         _write(0)
-        _pi.stop()
+        l.__del__()
         raise
         # p.stop()
         # GPIO.output(LedPin, GPIO.HIGH)    # turn off all leds
