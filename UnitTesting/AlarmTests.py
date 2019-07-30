@@ -204,7 +204,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
             alarm.target_minute = minute
 
             # assert desired brightness is a large value [95,100]
-            self.assertLessEqual(95, alarm.get_desired_brightness())
+            self.assertLessEqual(90, alarm.get_desired_brightness())
             self.assertLessEqual(alarm.get_desired_brightness(), 100)
 
     def test_fully_on_at_target_time(self):
@@ -268,6 +268,24 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
             alarm.target_minute = 0
 
             self.assertEqual(0, alarm.get_desired_brightness())
+    
+    def test_slightly_brighter_seconds_later(self):
+        from datetime import datetime
+        with patch('utilities.TestableDateTime') as mock_date:
+            mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01:00, Sunday, Jan 1st, 2006
+            alarm = Alarm()
+            alarm.add_target_day(Days.SUNDAY)
+            alarm.target_hour = 6
+            alarm.target_minute = config.wakeup_time - 1
+
+            # assert desired brightness is a smal value [.01,10]
+            old_value = alarm.get_desired_brightness()
+        with patch('utilities.TestableDateTime') as mock_date:
+            mock_date.now.return_value = datetime(2006, 1, 1, 6, 1, 10)  # 6:01:10, Sunday, Jan 1st, 2006
+
+            # assert desired brightness is a smal value [.01,10]
+            new_value = alarm.get_desired_brightness()
+        self.assertGreater(new_value, old_value)
 
 
 class TestAlarmDisabledStaysOff(unittest.TestCase):

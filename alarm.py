@@ -120,7 +120,7 @@ class Alarm(object):
             days_delta += 7 # the day of the week has passed, delta should be positive to the next occurrence
 
         target += timedelta(days=days_delta)
-        target = target.replace(hour=self.target_hour, minute=self.target_minute) # returns new target time
+        target = target.replace(hour=self.target_hour, minute=self.target_minute, second=0) # returns new target time
 
         return target
 
