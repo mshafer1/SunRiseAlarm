@@ -14,6 +14,5 @@ if __name__ == '__main__':
     verbosity = ['-v'] * args.verbosity
 
     pytest_args = [__file__, '-l'] + verbosity
-    pytest.main(pytest_args)
-
-    # unittest.main() - pytest runs these as well.
+    result = pytest.main(pytest_args)
+    sys.exit(result)
