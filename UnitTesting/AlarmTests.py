@@ -55,12 +55,12 @@ class TestAlarmAddOrRemoveDays(unittest.TestCase):
 class TestAlarmGetNextDay(unittest.TestCase):
     def testTestDateTime_YieldsActualDateTime(self):
         from datetime import datetime
-        today = datetime.today()
-        testable_today = utilities.TestableDateTime.today()
+        today = datetime.today().replace(microsecond=0)
+        testable_today = utilities.TestableDateTime.today().replace(microsecond=0)
         self.assertEqual(today, testable_today)
 
-        now = datetime.now()
-        testable_now = utilities.TestableDateTime.now()
+        now = datetime.now().replace(microsecond=0)
+        testable_now = utilities.TestableDateTime.now().replace(microsecond=0)
         self.assertEqual(now.hour, testable_now.hour)
         self.assertEqual(now.minute, testable_now.minute)
 
