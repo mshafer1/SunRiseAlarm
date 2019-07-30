@@ -5,7 +5,7 @@ import utilities
 import os
 
 value = platform.platform()
-test_environ = os['TEST'] if 'TEST' in os else ''
+test_environ = os.environ['TEST'] if 'TEST' in os.environ else ''
 
 if 'Windows' in value or test_environ:
     # this is a no-op class for testing on Windows platforms
