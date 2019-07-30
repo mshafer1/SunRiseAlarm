@@ -9,7 +9,7 @@ install:
   - python -m pip install -r requirements_test.txt
 # command to run tests
 script:
-  - python runTests.py
+  - TEST=TRUE; python runTests.py
 
 sudo: false # route your build to the container-based infrastructure for a faster build
 

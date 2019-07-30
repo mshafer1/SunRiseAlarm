@@ -2,10 +2,12 @@ import platform
 import config
 import math
 import utilities
+import os
 
 value = platform.platform()
+test_environ = os['TEST'] if 'TEST' in os else ''
 
-if 'Windows' in value:
+if 'Windows' in value or test_environ:
     # this is a no-op class for testing on Windows platforms
     GPIOLib = utilities._MockController
 
