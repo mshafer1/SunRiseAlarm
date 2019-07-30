@@ -1,0 +1,5 @@
+tinydb==3.13.0
+tinydb-serialization==1.0.4
+Mako==1.0.14
+py-flags==1.1.2
+pytest==5.0.1
