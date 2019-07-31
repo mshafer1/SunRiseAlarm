@@ -17,7 +17,7 @@ if __name__ == '__main__':
     pytest_args = [__file__, '-l'] + verbosity
 
     if args.cov:
-        pytest_args.append('--cov')
+        pytest_args.append('--cov=' + args.cov)
 
     result = pytest.main(pytest_args)
     sys.exit(result)
