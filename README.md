@@ -1,4 +1,8 @@
 # SunRiseAlarm
+Master: [![Travis CI build badge](https://travis-ci.org/mshafer1/SunRiseAlarm.svg?branch=master)](https://travis-ci.org/mshafer1/SunRiseAlarm)
+
+CLI: [![Travis CI build badge](https://travis-ci.org/mshafer1/SunRiseAlarm.svg?branch=CLI)](https://travis-ci.org/mshafer1/SunRiseAlarm)
+
 Raspberry PI based sunrise alarm clock
 
 ## Requires
