@@ -4,6 +4,7 @@ from UnitTesting.AlarmTests import *
 from UnitTesting.DatabseTests import *
 from UnitTesting.utilitiesTests import *
 from UnitTesting.LEDControllerTests import *
+from UnitTesting.CompositeTests import *
 
 
 if __name__ == '__main__':
