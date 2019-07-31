@@ -58,6 +58,7 @@ class _MockPWM_LED(object):
 
 class Days(Flags):
     ALL = 127  # next value would be 128, so 127 is sum of all current (through binary math properties)
+    WEEKDAYS = 62 # Sunday = 64, all before = 63, minus Saturday = 62
     SUNDAY = 64
     MONDAY = 32
     TUESDAY = 16

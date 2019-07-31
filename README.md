@@ -16,8 +16,8 @@ Raspberry PI based sunrise alarm clock
 |   ---         |       ---         |           ---         | --- | ---|
 |Pi GPIO module | GPIO output | `pip install pigpio`| | &#x2713;
 | tinydb        | Configuration storage|    `pip install tinydb`| &#x2713; | &#x2713;
-| tinydb-serialization | Serializing enums for config |    `pip install tinydb-serialization`| &#x2713; | &#x2713;
-| py-flags        | Python 3.5 compatible flags enum |    `pip install py-flags`| &#x2713; | &#x2713;
+| tinydb-serialization | Serializing enums for config | `pip install tinydb-serialization`| &#x2713; | &#x2713;
+| py-flags      | Python 3.5 compatible flags enum | `pip install py-flags`| &#x2713; | &#x2713;
 | pytest        | Unit testing |    `pip install pytest`| &#x2713; | 
 | pytest-cov    | Unit Test Coverage | `pip install pytest-cov` | &#x2713; | 
 | coveralls     | Reporting Coverage to coveralls | `pip install coveralls` | &#x2713; | 
