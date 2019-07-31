@@ -17,7 +17,10 @@ env:
 
 # command to run tests
 script:
-  - python runTests.py
+  - python runTests.py --cov=SunRiseAlarm
+
+after_success:
+  - coveralls
 
 sudo: false # route your build to the container-based infrastructure for a faster build
 
