@@ -17,7 +17,7 @@ env:
 
 # command to run tests
 script:
-  - python runTests.py --cov=.
+  - python -m pytest --cov=.
 
 after_success:
   - coveralls
