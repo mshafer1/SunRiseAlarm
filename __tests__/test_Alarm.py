@@ -1,7 +1,7 @@
-from alarm import Alarm
-import utilities
-from utilities import Days
-import config
+from SunRiseAlarm.alarm import Alarm
+from SunRiseAlarm import utilities
+from SunRiseAlarm.utilities import Days
+from SunRiseAlarm import config
 
 import unittest
 from unittest.mock import patch
@@ -66,7 +66,7 @@ class TestAlarmGetNextDay(unittest.TestCase):
 
     def test_NextDate_ReturnsTodayWhenTimeHasNotPassedYet(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 0, 0)  # midnight, Sunday, Jan 1st, 2006
 
             alarm = Alarm()
@@ -78,7 +78,7 @@ class TestAlarmGetNextDay(unittest.TestCase):
 
     def test_NextDate_ReturnsTomorrowWhenTimeHasPassed(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 30)  # 6:30, Sunday, Jan 1st, 2006
 
             alarm = Alarm()
@@ -91,7 +91,7 @@ class TestAlarmGetNextDay(unittest.TestCase):
 
     def test_NextDate_ReturnsDayNextWeekWhenTimeHasPassed(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 2, 6, 30)  # 6:30, Monday, Jan 2nd, 2006
 
             alarm = Alarm()
@@ -106,7 +106,7 @@ class TestAlarmGetNextDay(unittest.TestCase):
 class TestAlarmGetTargetDateTime(unittest.TestCase):
     def test_today_times(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 5, 29)  # 5:29, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -123,7 +123,7 @@ class TestAlarmGetTargetDateTime(unittest.TestCase):
 
     def test_today_passed_times(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -138,7 +138,7 @@ class TestAlarmGetTargetDateTime(unittest.TestCase):
 
     def test_tomorrow_times(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.MONDAY)
@@ -153,7 +153,7 @@ class TestAlarmGetTargetDateTime(unittest.TestCase):
 
     def test_next_week_times(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 3, 0, 0)  # midnight, Tuesday, Jan 3rd, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -169,7 +169,7 @@ class TestAlarmGetTargetDateTime(unittest.TestCase):
 class TestGradualFadeUpOnTime(unittest.TestCase):
     def test_off_desired_time_plus_one_minutes_early(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -180,7 +180,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_slightly_on_desired_time_minus_one_minutes_early(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -193,7 +193,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_nearly_completly_on_target_time_minus_one_minute(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -209,7 +209,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_fully_on_at_target_time(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -220,7 +220,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_fully_on_for_almost_desired_time_after_target(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time - 1)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
             alarm = Alarm()
@@ -233,7 +233,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_fully_on_for_desired_time_after_target(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
             alarm = Alarm()
@@ -246,7 +246,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_fully_off_on_other_days_than_target(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             hours, minutes = utilities.normalize_time(6, config.after_wakeup_on_time)
             mock_date.now.return_value = datetime(2006, 1, 1, hours, minutes)  # ?, Sunday, Jan 1st, 2006
             alarm = Alarm()
@@ -259,7 +259,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
     def test_fully_off_on_days_after_target(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 6th, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.FRIDAY)
@@ -271,7 +271,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
     
     def test_slightly_brighter_seconds_later(self):
         from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1)  # 6:01:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
@@ -280,7 +280,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
             # assert desired brightness is a smal value [.01,10]
             old_value = alarm.get_desired_brightness()
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 1, 10)  # 6:01:10, Sunday, Jan 1st, 2006
 
             # assert desired brightness is a smal value [.01,10]
@@ -290,7 +290,7 @@ class TestGradualFadeUpOnTime(unittest.TestCase):
 
 class TestAlarmDisabledStaysOff(unittest.TestCase):
     def test_AlarmThatIsDisabledStaysAtValueZero(self):
-        with patch('utilities.TestableDateTime') as mock_date:
+        with patch('SunRiseAlarm.utilities.TestableDateTime') as mock_date:
             mock_date.now.return_value = datetime(2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
             alarm = Alarm()
             alarm.add_target_day(Days.SUNDAY)
