@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 
-import config
+from . import config
+from .LED_controller import *
 
 
 import unittest
 
-from LEDController import *
-import utilities
-from utilities import Days
+from . import utilities
+from .utilities import Days
 from datetime import datetime, timedelta, time
 
 

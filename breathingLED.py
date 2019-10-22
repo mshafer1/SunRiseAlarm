@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import time
-from LEDController import LEDController
+from LED_Controller import LEDController
 
 l = LEDController()
 
