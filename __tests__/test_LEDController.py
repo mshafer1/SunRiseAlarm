@@ -1,4 +1,4 @@
-from LEDController import LEDController
+from SunRiseAlarm.LED_controller import LEDController
 
 import pytest
 import logging
