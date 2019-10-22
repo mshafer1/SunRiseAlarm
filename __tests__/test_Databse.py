@@ -2,9 +2,9 @@ import unittest
 import os.path
 import sys
 
-from database import DB
-from alarm import Alarm
-import utilities
+from SunRiseAlarm.database import DB
+from SunRiseAlarm.alarm import Alarm
+from SunRiseAlarm import utilities
 
 tests_cleanup_after = True
 tests_cleanup_before = False
@@ -42,7 +42,7 @@ class TestDBCanStoreAlarm(DBTest_setup):
         self.db.add_alarm(alarm)
 
         self.db.add_alarm(alarm)
-        self.assertEqual(len(self.db.get_alarms()), 1)
+        self.assertEqual(len(list(self.db.get_alarms())), 1)
 
     def testTestDBDoubleInsertionDifferentAlarmAddsAlarm(self):
         alarm = Alarm()
@@ -51,7 +51,7 @@ class TestDBCanStoreAlarm(DBTest_setup):
 
         alarm2 = Alarm()
         self.db.add_alarm(alarm2)
-        self.assertEqual(len(self.db.get_alarms()), 2)
+        self.assertEqual(len(list(self.db.get_alarms())), 2)
 
 
 class TestCanReloadAlarms(DBTest_setup):
@@ -63,13 +63,13 @@ class TestCanReloadAlarms(DBTest_setup):
 
         self.db.add_alarm(alarm)
 
-        expected_id = self.db.get_alarms()[0].id
+        expected_id = list(self.db.get_alarms())[0].id
 
         self.db._close()
         self.db._open()
 
         self.assertEqual(len(self.db.get_alarms()), 1)
-        alarm = self.db.get_alarms()[0]
+        alarm = list(self.db.get_alarms())[0]
         self.assertEqual(alarm.target_days, utilities.Days.MONDAY | utilities.Days.FRIDAY)
         self.assertEqual(alarm.target_hour, 6)
         self.assertEqual(alarm.target_minute, 5)
@@ -83,7 +83,7 @@ class TestCanReloadAlarms(DBTest_setup):
 
         self.db.add_alarm(alarm1)
 
-        expected_id = self.db.get_alarms()[0].id
+        expected_id = list(self.db.get_alarms())[0].id
 
         alarm2 = Alarm()
         alarm2.target_days = utilities.Days.ALL
@@ -92,13 +92,13 @@ class TestCanReloadAlarms(DBTest_setup):
         self.db._open()
 
         self.assertEqual(len(self.db.get_alarms()), 2)
-        alarm1 = self.db.get_alarms()[0]
+        alarm1 = list(self.db.get_alarms())[0]
         self.assertEqual(alarm1.target_days, utilities.Days.MONDAY | utilities.Days.FRIDAY)
         self.assertEqual(alarm1.target_hour, 6)
         self.assertEqual(alarm1.target_minute, 5)
         self.assertEqual(expected_id, alarm1.id)
 
-        alarm2 = self.db.get_alarms()[1]
+        alarm2 = list(self.db.get_alarms())[1]
         self.assertEqual(alarm2.target_days, utilities.Days.ALL)
 
 
