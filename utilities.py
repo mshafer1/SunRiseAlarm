@@ -22,6 +22,7 @@ class TestableDateTime(object):
 class _MockController():
     def __init__(self):
         self.values = {}
+        self._range = 255 # pigpio defaults to 255
 
     @classmethod
     def pi(cls):
@@ -35,6 +36,10 @@ class _MockController():
 
     def read(self, pin):
         return self.values[pin]
+    
+    def set_PWM_range(self, pin, range):
+        assert 25 <= range <= 4000
+        self._range = range
 
 
 

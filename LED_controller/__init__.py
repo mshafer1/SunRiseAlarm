@@ -21,6 +21,9 @@ class LEDController(object):
     def __init__(self):
         self._pi = GPIOLib.pi()
         self._pin = config.LED_pin
+        self._pi.set_PWM_range(self._pin, 4e3)
+
+
         self.value_raw = 0
 
     def __del__(self):
@@ -29,11 +32,13 @@ class LEDController(object):
 
     @property
     def value_raw(self):
-        return self._pi.read(self._pin)
+        _value = self._pi.read(self._pin)
+        return _value / 4000 * 255
 
     @value_raw.setter
     def value_raw(self, value):
-        self._pi.set_PWM_dutycycle(self._pin, value)
+        _value = value / 255.0 * 4000
+        self._pi.set_PWM_dutycycle(self._pin, _value)
 
     @property
     def value(self):
