@@ -1,6 +1,6 @@
 import unittest
 
-from SunRiseAlarm.utilities import *
+from ..utilities import *
 
 # region unit tests
 

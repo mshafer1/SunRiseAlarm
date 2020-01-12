@@ -2,9 +2,9 @@ import unittest
 import os.path
 import sys
 
-from SunRiseAlarm.database import DB
-from SunRiseAlarm.alarm import Alarm
-from SunRiseAlarm import utilities
+from ..database import DB
+from ..alarm import Alarm
+from .. import utilities
 
 tests_cleanup_after = True
 tests_cleanup_before = False

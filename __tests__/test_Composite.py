@@ -1,13 +1,15 @@
-from SunRiseAlarm.alarm import Alarm
-from SunRiseAlarm.alarmComposite import AlarmComposite
-from SunRiseAlarm.utilities import Days
+from ..alarm import Alarm
+from ..alarmComposite import AlarmComposite
+from ..utilities import Days
+from .. import utilities as utilities
 
 import unittest
 from unittest.mock import patch
 
 
 def get_mock_date():
-    return patch('SunRiseAlarm.utilities.TestableDateTime')
+    name = __name__
+    return patch('utilities.TestableDateTime')
 
 
 class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
