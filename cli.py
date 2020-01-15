@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import time
 
 import sys
 on_windows = 'linux' not in sys.platform
@@ -58,7 +59,9 @@ if __name__ == '__main__':
     }
     try:
         vm = ViewModel()
-
+        vm.led.value_raw = 50
+        time.sleep(1)
+        vm.led.value_raw = 0
         while True:
             menu(menu_items)
     except:
