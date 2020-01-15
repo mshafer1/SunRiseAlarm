@@ -1,7 +1,8 @@
 
-import config
+from . import config
 
-import LED_controller
+from . import LED_controller
+from . import utilities
 
 
 if __name__ == "__main__" and __package__ is None:
