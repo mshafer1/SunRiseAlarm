@@ -5,7 +5,6 @@ import time
 import sys
 on_windows = 'linux' not in sys.platform
 
-
 from database import DB
 from alarm import Alarm
 from viewModel import ViewModel
