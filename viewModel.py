@@ -16,7 +16,7 @@ class ViewModel(object):
         for alarm in self.db.get_alarms():
             self.alarms.add_alarm(alarm)
 
-        self._timer = RepeatedTimer(1, self._set_brightness)
+        self._timer = RepeatedTimer(.1, self._set_brightness)
 
     def add_alarm(self):
         alarm = Alarm()
@@ -26,9 +26,8 @@ class ViewModel(object):
 
     def _set_brightness(self):
         brightness = self.alarms.get_desired_brightness()
-        self.led.value = brightness
+        self.led.value_raw = brightness
         # print("Setting brightness to: {0}".format(brightness))
-        time.sleep(1)
 
     def __del__(self):
         self.led.value = 0
