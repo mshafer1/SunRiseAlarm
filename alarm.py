@@ -49,15 +49,16 @@ class Alarm(object):
         Get the next target day as a Day enum
         :return: Day enum
         """
-        if self.target_days == utilities.Days(0):
-            raise Exception("No time set")
-
         # get current date time
         now = utilities.TestableDateTime.now()
-
         today = utilities.convert_datetime_weekday_to_zero_sunday(now.weekday())
-
         today_as_days_flag = utilities.convert_weekday_to_days_flag(today)
+
+        if self.target_days == utilities.Days(0):
+            result = today_as_days_flag
+            for _ in range(6):
+                result = Days.increment(result)
+            return result # return yesterday
 
         # evaluate next target day (if today is a target day, include if not past alarm time)
         if today_as_days_flag in self.target_days:
