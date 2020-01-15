@@ -2,8 +2,8 @@ import copy
 from tinydb import TinyDB, Query
 from tinydb_serialization import SerializationMiddleware
 
-from .alarm import Alarm
-from . import utilities
+from alarm import Alarm
+import utilities
 
 
 class DB(object):

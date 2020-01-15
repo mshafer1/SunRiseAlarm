@@ -2,8 +2,8 @@ import platform
 import math
 import os
 
-from .. import config
-from .. import utilities
+import config
+import utilities
 
 value = platform.platform()
 test_environ = os.environ['TEST'] if 'TEST' in os.environ else ''
@@ -21,7 +21,7 @@ class LEDController(object):
     def __init__(self):
         self._pi = GPIOLib.pi()
         self._pin = config.LED_pin
-        self._pi.set_PWM_range(self._pin, 4e3)
+        self._pi.set_PWM_range(self._pin, int(4e3))
 
 
         self.value_raw = 0

@@ -1,6 +1,6 @@
-from .alarm import Alarm
+from alarm import Alarm
 
-from .utilities import Days
+from utilities import Days
 
 
 class AlarmComposite(object):
