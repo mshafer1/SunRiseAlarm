@@ -33,11 +33,11 @@ class LEDController(object):
     @property
     def value_raw(self):
         _value = self._pi.read(self._pin)
-        return _value / 4000 * 255
+        return _value / 4000 * 100
 
     @value_raw.setter
     def value_raw(self, value):
-        _value = value / 255.0 * 4000
+        _value = value * 4000 // 100 
         self._pi.set_PWM_dutycycle(self._pin, _value)
 
     @property
