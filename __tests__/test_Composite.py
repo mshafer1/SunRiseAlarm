@@ -1,3 +1,5 @@
+import pytest
+
 from ..alarm import Alarm
 from ..alarmComposite import AlarmComposite
 from ..utilities import Days
@@ -54,239 +56,248 @@ class TestTargetDaysReturnsOrOfAllDays(unittest.TestCase):
                          Days.FRIDAY, composite.target_days)
 
 
-class TestTargetHourReturnsNearestHour(unittest.TestCase):
-    def test_empty_composite_throws(self):
-        composite = AlarmComposite()
-        with self.assertRaises(Exception) as context:
-            composite.target_hour
-        self.assertTrue(
-            'Must have at least one alarm' in str(context.exception))
-
-    def test_single_yields_that(self):
-        composite = AlarmComposite()
-        alarm = Alarm()
-        composite.add_alarm(alarm)
-        self.assertEqual(0, composite.target_hour)
-
-        alarm.target_hour = 5
-
-        self.assertEqual(5, composite.target_hour)
-
-    def test_double_yields_nearest(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
-
-            alarm1.add_target_day(Days.ALL)
-            alarm1.target_hour = 7
-
-            alarm2.add_target_day(Days.ALL)
-            alarm2.target_hour = 8
-
-            self.assertEqual(7, composite.target_hour)
-
-    def test_double_yields_nearest_two(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
-
-            alarm1.add_target_day(Days.MONDAY)
-            alarm1.target_hour = 7
-
-            alarm2.add_target_day(Days.SUNDAY)
-            alarm2.target_hour = 8
-
-            self.assertEqual(8, composite.target_hour)
+# Region Target Hour returns nearest hour
+def test_empty_composite_throws():
+    composite = AlarmComposite()
+    with pytest.raises(Exception) as exc_info:
+        composite.target_hour
+    assert 'Must have at least one alarm' in exc_info.value.args[0]
 
 
-class TestTargetMinuteReturnsNearestHour(unittest.TestCase):
-    def test_empty_composite_throws(self):
-        composite = AlarmComposite()
-        with self.assertRaises(Exception) as context:
-            composite.target_minute
-        self.assertTrue(
-            'Must have at least one alarm' in str(context.exception))
+def test_single_yields_that():
+    composite = AlarmComposite()
+    alarm = Alarm()
+    composite.add_alarm(alarm)
+    assert composite.target_hour == 0
 
-    def test_single_yields_that(self):
-        composite = AlarmComposite()
-        alarm = Alarm()
-        composite.add_alarm(alarm)
-        self.assertEqual(0, composite.target_minute)
+    alarm.target_hour = 5
 
-        alarm.target_minute = 30
-
-        self.assertEqual(30, composite.target_minute)
-
-    def test_double_yields_nearest(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
-
-            alarm1.add_target_day(Days.ALL)
-            alarm1.target_minute = 15
-
-            alarm2.add_target_day(Days.ALL)
-            alarm2.target_minute = 30
-
-            self.assertEqual(15, composite.target_minute)
-
-    def test_double_yields_nearest_two(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
-
-            alarm1.add_target_day(Days.MONDAY)
-            alarm1.target_hour = 6
-            alarm1.target_minute = 0
-
-            alarm2.add_target_day(Days.SUNDAY)
-            alarm2.target_hour = 8
-            alarm2.target_minute = 30
-
-            self.assertEqual(30, composite.target_minute)
+    assert composite.target_hour == 5
 
 
-class TestNexDayReturnsNearestNextDay(unittest.TestCase):
-    def test_empty_composite_throws(self):
-        composite = AlarmComposite()
-        with self.assertRaises(Exception) as context:
-            composite.target_minute
-        self.assertTrue(
-            'Must have at least one alarm' in str(context.exception))
+def test_double_yields_nearest(mock_date):
+    from datetime import datetime
 
-    def test_single_yields_that(self):
-        composite = AlarmComposite()
-        alarm = Alarm()
-        composite.add_alarm(alarm)
-        alarm.add_target_day(Days.MONDAY)
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
 
-        self.assertEqual(Days.MONDAY, composite.next_day)
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
 
-    def test_double_yields_nearest(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
+    alarm1.add_target_day(Days.ALL)
+    alarm1.target_hour = 7
 
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
+    alarm2.add_target_day(Days.ALL)
+    alarm2.target_hour = 8
 
-            alarm1.add_target_day(Days.FRIDAY)
-            alarm2.add_target_day(Days.SATURDAY)
-
-            self.assertEqual(Days.FRIDAY, composite.next_day)
-
-    def test_double_yields_nearest_two(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
-
-            alarm1.add_target_day(Days.MONDAY)
-            alarm1.target_hour = 5
-            alarm1.target_minute = 0
-
-            alarm2.add_target_day(Days.SUNDAY)
-            alarm2.target_hour = 5
-            alarm2.target_minute = 0
-
-            self.assertEqual(Days.MONDAY, composite.next_day)
+    composite.target_hour == 7
 
 
-class TestDesiredBrightnessYieldsGreatest(unittest.TestCase):
-    def test_empty_composite_throws(self):
-        composite = AlarmComposite()
-        self.assertEqual(0, composite.get_desired_brightness())
+def test_double_yields_nearest_two(mock_date):
+    from datetime import datetime
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
 
-    def test_single_yields_that(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
 
-            composite = AlarmComposite()
+    alarm1.add_target_day(Days.MONDAY)
+    alarm1.target_hour = 7
 
-            alarm = Alarm()
-            composite.add_alarm(alarm)
-            alarm.add_target_day(Days.SUNDAY)
-            alarm.target_hour = 6
-            alarm.target_minute = 5
+    alarm2.add_target_day(Days.SUNDAY)
+    alarm2.target_hour = 8
 
-            self.assertEqual(alarm.get_desired_brightness(),
-                             composite.get_desired_brightness())
+    assert composite.target_hour == 8
+# End Region
 
-    def test_double_yields_nearest(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
+# Region Target minute returns nearest hour
 
-            alarm1.add_target_day(Days.FRIDAY)
-            alarm1.target_hour = 6
-            alarm1.target_minute = 0
-            alarm2.add_target_day(Days.SUNDAY)
-            alarm2.target_hour = 6
-            alarm2.target_minute = 20
 
-            self.assertEqual(alarm2.get_desired_brightness(),
-                             composite.get_desired_brightness())
+def test_empty_composite_throws_on_target_minute():
+    composite = AlarmComposite()
+    with pytest.raises(Exception) as exc_info:
+        composite.target_minute
+    assert 'Must have at least one alarm' in exc_info.value.args[0]
 
-    def test_double_yields_nearest_two(self):
-        from datetime import datetime
-        with get_mock_date() as mock_date:
-            mock_date.now.return_value = datetime(
-                2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
-            composite = AlarmComposite()
 
-            alarm1 = Alarm()
-            alarm2 = Alarm()
-            composite.add_alarms(alarm1, alarm2)
+def test_single_yields_that_minute():
+    composite = AlarmComposite()
+    alarm = Alarm()
+    composite.add_alarm(alarm)
+    assert composite.target_minute == 0
 
-            alarm1.add_target_day(Days.SUNDAY)
-            alarm1.target_hour = 6
-            alarm1.target_minute = 15
+    alarm.target_minute = 30
 
-            alarm2.add_target_day(Days.SUNDAY)
-            alarm2.target_hour = 6
-            alarm2.target_minute = 30
+    assert composite.target_minute == 30
 
-            self.assertEqual(alarm1.get_desired_brightness(),
-                             composite.get_desired_brightness())
+
+def test_double_yields_nearest_minute(mock_date):
+    from datetime import datetime
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.ALL)
+    alarm1.target_minute = 15
+
+    alarm2.add_target_day(Days.ALL)
+    alarm2.target_minute = 30
+
+    assert composite.target_minute == 15
+
+
+def test_double_yields_nearest_two_minute(mock_date):
+    from datetime import datetime
+
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.MONDAY)
+    alarm1.target_hour = 6
+    alarm1.target_minute = 0
+
+    alarm2.add_target_day(Days.SUNDAY)
+    alarm2.target_hour = 8
+    alarm2.target_minute = 30
+
+    assert composite.target_minute == 30
+# end region
+
+# region Next Day returns nearest next day
+
+
+def test_empty_composite_throws_next_day():
+    composite = AlarmComposite()
+    with pytest.raises(Exception) as exc_info:
+        composite.next_day
+    assert 'Must have at least one alarm' in exc_info.value.args[0]
+
+
+def test_single_yields_that_next_day():
+    composite = AlarmComposite()
+    alarm = Alarm()
+    composite.add_alarm(alarm)
+    alarm.add_target_day(Days.MONDAY)
+
+    assert composite.next_day == Days.MONDAY
+
+
+def test_double_yields_nearest_next_day(mock_date):
+    from datetime import datetime
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.FRIDAY)
+    alarm2.add_target_day(Days.SATURDAY)
+
+    assert composite.next_day == Days.FRIDAY
+
+
+def test_double_yields_nearest_two_next_day(mock_date):
+    from datetime import datetime
+
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.MONDAY)
+    alarm1.target_hour = 5
+    alarm1.target_minute = 0
+
+    alarm2.add_target_day(Days.SUNDAY)
+    alarm2.target_hour = 5
+    alarm2.target_minute = 0
+
+    assert composite.next_day == Days.MONDAY
+# end region
+
+# region Desired brightness yields greatest
+
+def test_empty_composite_returns_0_brightness():
+    composite = AlarmComposite()
+    assert composite.get_desired_brightness() == 0
+
+
+def test_single_yields_that_brightness(mock_date):
+    from datetime import datetime
+
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+
+    composite = AlarmComposite()
+
+    alarm = Alarm()
+    composite.add_alarm(alarm)
+    alarm.add_target_day(Days.SUNDAY)
+    alarm.target_hour = 6
+    alarm.target_minute = 5
+
+    assert alarm.get_desired_brightness() == composite.get_desired_brightness()
+
+
+def test_double_yields_nearest_brightness(mock_date):
+    from datetime import datetime
+
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.FRIDAY)
+    alarm1.target_hour = 6
+    alarm1.target_minute = 0
+    alarm2.add_target_day(Days.SUNDAY)
+    alarm2.target_hour = 6
+    alarm2.target_minute = 20
+
+    assert alarm2.get_desired_brightness() == composite.get_desired_brightness()
+
+
+def test_double_yields_nearest_two_brightness(mock_date):
+    from datetime import datetime
+
+    mock_date.now.return_value = datetime(
+        2006, 1, 1, 6, 0)  # 6:00, Sunday, Jan 1st, 2006
+    composite = AlarmComposite()
+
+    alarm1 = Alarm()
+    alarm2 = Alarm()
+    composite.add_alarms(alarm1, alarm2)
+
+    alarm1.add_target_day(Days.SUNDAY)
+    alarm1.target_hour = 6
+    alarm1.target_minute = 15
+
+    alarm2.add_target_day(Days.SUNDAY)
+    alarm2.target_hour = 6
+    alarm2.target_minute = 30
+
+    assert alarm1.get_desired_brightness() == composite.get_desired_brightness()
+# end region
 
 
 if __name__ == '__main__':

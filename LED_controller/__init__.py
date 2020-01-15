@@ -2,8 +2,8 @@ import platform
 import math
 import os
 
-import config
-import utilities
+from SunRiseAlarm import config
+from SunRiseAlarm import utilities
 
 value = platform.platform()
 test_environ = os.environ['TEST'] if 'TEST' in os.environ else ''
