@@ -44,56 +44,23 @@ def test__alarm_with_day_set__remove_target_day__unsets_that_days_flag(days_set,
 
     assert alarm.target_days & day_to_remove == Days(0) # There should be no overlap between still set bits and the day to remove
 
+# NOTE: Jan 1, 2006 is used because it is a sunday - yielding easy translation from day of Jan to day of week.
+@pytest.mark.parametrize("mock_datetime, set_days, expected_day", (
+    (datetime(2006, 1, 1, 0, 0), Days.SUNDAY, Days.SUNDAY), # midnight, next is today
+    (datetime(2006, 1, 1, 6, 30), Days.SUNDAY, Days.SUNDAY), # after alarm time, same day next week
+    (datetime(2006, 1, 1, 6, 30), Days.SUNDAY + Days.MONDAY, Days.MONDAY), # after time, return tomorrow
+    (datetime(2006, 1, 2, 6, 30), Days.SUNDAY + Days.MONDAY, Days.SUNDAY), # after time on Monday, return next week
+))
+def test__mock_date__next_day__returns_expected_day(mock_datetime, set_days, expected_day, freezer):
+    freezer.move_to(mock_datetime)
+    alarm = Alarm()
+    alarm.add_target_day(set_days)
+    alarm.target_hour = 6
+    alarm.target_minute = 0
 
-class TestAlarmGetNextDay(unittest.TestCase):
-    def testTestDateTime_YieldsActualDateTime(self):
-        from datetime import datetime
-        today = datetime.today()
-        testable_today = utilities.TestableDateTime.today()
-        self.assertEqual(today, testable_today)
+    next_day = alarm.next_day
 
-        now = datetime.now()
-        testable_now = utilities.TestableDateTime.now()
-        self.assertEqual(now.hour, testable_now.hour)
-        self.assertEqual(now.minute, testable_now.minute)
-
-    def test_NextDate_ReturnsTodayWhenTimeHasNotPassedYet(self):
-        from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
-            mock_date.now.return_value = datetime(2006, 1, 1, 0, 0)  # midnight, Sunday, Jan 1st, 2006
-
-            alarm = Alarm()
-            alarm.add_target_day(Days.SUNDAY)
-            alarm.target_hour = 6
-            alarm.target_minute = 0
-
-            self.assertEqual(Days.SUNDAY, alarm.next_day)
-
-    def test_NextDate_ReturnsTomorrowWhenTimeHasPassed(self):
-        from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
-            mock_date.now.return_value = datetime(2006, 1, 1, 6, 30)  # 6:30, Sunday, Jan 1st, 2006
-
-            alarm = Alarm()
-            alarm.add_target_day(Days.SUNDAY)
-            alarm.add_target_day(Days.MONDAY)
-            alarm.target_hour = 6
-            alarm.target_minute = 0
-
-            self.assertEqual(Days.MONDAY, alarm.next_day)
-
-    def test_NextDate_ReturnsDayNextWeekWhenTimeHasPassed(self):
-        from datetime import datetime
-        with patch('utilities.TestableDateTime') as mock_date:
-            mock_date.now.return_value = datetime(2006, 1, 2, 6, 30)  # 6:30, Monday, Jan 2nd, 2006
-
-            alarm = Alarm()
-            alarm.add_target_day(Days.SUNDAY)
-            alarm.add_target_day(Days.MONDAY)
-            alarm.target_hour = 6
-            alarm.target_minute = 0
-
-            self.assertEqual(Days.SUNDAY, alarm.next_day)
+    assert expected_day == next_day
 
 
 class TestAlarmGetTargetDateTime(unittest.TestCase):
