@@ -72,6 +72,8 @@ class Days(Flags):
         next_day_base_value = (day_base_value - 1)%7
         return Days(int(math.pow(2, next_day_base_value)))
 
+    def __add__(self, other):
+        return Days(self | other)
 
 class DaysSerializer(Serializer):
     OBJ_CLASS = Days
