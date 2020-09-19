@@ -40,10 +40,10 @@ Mako = "1.0.14"
 tinydb = "3.13.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "5.0.1"
-pytest-cov = "2.7.1"
-pytest-mock = "2.0.0"
-coveralls = "1.8.2"
+pytest = "^6.0.0"
+pytest-cov = "^2.7.1"
+pytest-mock = "^2.0.0"
+coveralls = "^1.8.2"
 pytest-freezegun = "^0.4.2"
 
 [build-system]

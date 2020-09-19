@@ -25,6 +25,7 @@ class TestConvertDateTimeToZeroBasedWeekday(unittest.TestCase):
         Fri - 5
         Sat - 6
     """
+
     def test_Sunday_is_0(self):
         self.assertEqual(0, convert_datetime_weekday_to_zero_sunday(6))
 
@@ -57,6 +58,7 @@ class TestConvertZeroBasedWeekdayToDaysEnum(unittest.TestCase):
         Fri - 5
         Sat - 6
     """
+
     def test_Sun(self):
         self.assertEqual(Days.SUNDAY, convert_weekday_to_days_flag(0))
 
@@ -88,9 +90,12 @@ class TestConvertDaysFlagToWeekday(unittest.TestCase):
 
     def test_Sat_6(self):
         self.assertEqual(6, convert_days_flag_to_weekday(Days.SATURDAY))
+
     # can it handle multiple days??
+
+
 # endregion
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

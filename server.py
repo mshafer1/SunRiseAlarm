@@ -21,15 +21,17 @@ import json
 import threading
 
 import logging
+
 FORMAT = r"[%(asctime)20s:%(funcName)20s] %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG, style='%')
+logging.basicConfig(format=FORMAT, level=logging.DEBUG, style="%")
 logger = logging.getLogger(os.path.basename(os.path.realpath(__name__)))
 
 from classProperty import class_property
 
-class actionModes():
-    requestConfig = 'getConfig'
-    postConfig = 'setConfig'
+
+class actionModes:
+    requestConfig = "getConfig"
+    postConfig = "setConfig"
     # setTime = 'setTime' # for use with changing the sytem time
 
 
@@ -45,7 +47,6 @@ class HandlerObserver(object):
 
 
 class Handler(BaseHTTPRequestHandler):
-
     @class_property
     def _observer(cls):
         return cls._observer
@@ -57,16 +58,15 @@ class Handler(BaseHTTPRequestHandler):
         cls._observer = value
         return cls._observer
 
-
-    def _set_headers(self, code=200, message=''):
+    def _set_headers(self, code=200, message=""):
         self.send_response(code, message)
-        self.send_header('Content-type', 'text/html')
+        self.send_header("Content-type", "text/html")
         self.end_headers()
 
     def do_GET(self):
         self._set_headers()
         self._write("<html><body><h1>hi!</h1></body></html>")
-        logger.debug('Received: ' + self.path)
+        logger.debug("Received: " + self.path)
         query_components = parse_qs(urlparse(self.path).query)
         logger.debug(json.dumps(query_components))
 
@@ -75,20 +75,20 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         # Doesn't do anything with posted data
-        self._set_headers(400, 'Post not supported')
+        self._set_headers(400, "Post not supported")
 
     def _write(self, message):
-        self.wfile.write(bytes(message, 'UTF-8'))
+        self.wfile.write(bytes(message, "UTF-8"))
 
 
 class AlarmServer(HandlerObserver):
     def __init__(self, server_class=ThreadingHTTPServer, handler_class=Handler, port=1024):
-        server_address = ('', port)
+        server_address = ("", port)
         self.httpd = server_class(server_address, handler_class)
         self.worker = threading.Thread(target=self.run_server(), args=())
 
-        logger.info('Starting httpd...')
-        logger.info('127.0.0.1:' + str(port))
+        logger.info("Starting httpd...")
+        logger.info("127.0.0.1:" + str(port))
         handler_class._observer = self
         self.start_server()
 
@@ -105,9 +105,9 @@ class AlarmServer(HandlerObserver):
         try:
             self.httpd.serve_forever()
         except KeyboardInterrupt:
-            print('Received shutdown command..')
+            print("Received shutdown command..")
             self.httpd.shutdown()
-            print('Server shutdown.')
+            print("Server shutdown.")
             raise
         self._cleanup()
 
@@ -121,17 +121,17 @@ class AlarmServer(HandlerObserver):
 
 
 def run(server_class=ThreadingHTTPServer, handler_class=Handler, port=1024):
-    server_address = ('', port)
+    server_address = ("", port)
     httpd = server_class(server_address, handler_class)
 
-    logger.info('Starting httpd...')
-    logger.info('127.0.0.1:' + str(port))
+    logger.info("Starting httpd...")
+    logger.info("127.0.0.1:" + str(port))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print('Received shutdown command..')
+        print("Received shutdown command..")
         httpd.shutdown()
-        print('Server shutdown.')
+        print("Server shutdown.")
         raise
 
 

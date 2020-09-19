@@ -19,7 +19,7 @@ class TestableDateTime(object):
         return datetime.now()
 
 
-class _MockController():
+class _MockController:
     def __init__(self):
         self.values = {}
 
@@ -37,8 +37,6 @@ class _MockController():
         return self.values[pin]
 
 
-
-
 class _MockPWM_LED(object):
     def __init__(self, pin):
         self._value = 0
@@ -52,6 +50,7 @@ class _MockPWM_LED(object):
     def value(self, input):
         self._value = input
         return self._value
+
 
 # endregion
 
@@ -69,11 +68,12 @@ class Days(Flags):
     @classmethod
     def increment(cls, object):
         day_base_value = int(math.log(int(object), 2))
-        next_day_base_value = (day_base_value - 1)%7
+        next_day_base_value = (day_base_value - 1) % 7
         return Days(int(math.pow(2, next_day_base_value)))
 
     def __add__(self, other):
         return Days(self | other)
+
 
 class DaysSerializer(Serializer):
     OBJ_CLASS = Days
@@ -125,5 +125,5 @@ def normalize_time(hours, minutes):
         hours += 1
     return hours, minutes
 
-# endregion
 
+# endregion

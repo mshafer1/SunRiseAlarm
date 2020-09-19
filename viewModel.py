@@ -9,7 +9,7 @@ from repeatedTimer import RepeatedTimer
 
 class ViewModel(object):
     def __init__(self):
-        self.db = database.DB('alarms.json')
+        self.db = database.DB("alarms.json")
         self.alarms = alarmComposite.AlarmComposite()
         self.led = LEDController.LEDController()
 
@@ -41,5 +41,6 @@ def _main():
     while True:
         pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     _main()

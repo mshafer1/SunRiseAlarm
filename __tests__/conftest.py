@@ -9,6 +9,7 @@ sys.path.append(os.path.realpath(os.path.join(__MY_PATH, "..")))
 
 import database
 
+
 @pytest.fixture()
 def temp_db(tmp_path):
     # tmp_path Pytest fixture provids a per test/run unique folder in the temp directory
@@ -16,4 +17,3 @@ def temp_db(tmp_path):
     db_file = tmp_path / "db.sqlite"
     db = database.DB(str(db_file))
     yield db
-

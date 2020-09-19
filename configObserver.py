@@ -1,4 +1,3 @@
-
 class ConfigObserver(object):
     def __init__(self):
         pass
@@ -11,5 +10,3 @@ class ConfigObserver(object):
 
     def alarm_changed(self, alarm):
         raise NotImplemented("alarm_changed is not implemented")
-
-

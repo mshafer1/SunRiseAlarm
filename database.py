@@ -18,9 +18,9 @@ class DB(object):
 
     def _open(self):
         serialization = SerializationMiddleware()
-        serialization.register_serializer(utilities.DaysSerializer, 'Days')
+        serialization.register_serializer(utilities.DaysSerializer, "Days")
         self.db = TinyDB(self.__db_path, indent=4, storage=serialization)
-        self.table = self.db.table('Alarms')
+        self.table = self.db.table("Alarms")
 
     def add_alarm(self, alarm):
         if not isinstance(alarm, DBAlarm):
@@ -34,7 +34,7 @@ class DB(object):
             # already exist in db, call update
             self._update_alarm(store_alarm)
         else:
-            self.table.insert(store_alarm.__dict__) # store all values
+            self.table.insert(store_alarm.__dict__)  # store all values
 
     def get_alarms(self):
         result = []
@@ -81,7 +81,7 @@ class DBAlarm(Alarm):
     def get_id(cls, alarm):
         value = hash(id(alarm))
         while value in cls.ids:
-            value = hash(value) # keep hashing till we find one
+            value = hash(value)  # keep hashing till we find one
             cls.ids.append(value)
         return value
 

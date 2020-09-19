@@ -6,6 +6,7 @@ import database
 from alarm import Alarm
 import utilities
 
+
 def test__alarm__db_insert__does_not_throw(temp_db):
     a = Alarm()
     a.target_days = [utilities.Days.SUNDAY]
@@ -32,7 +33,7 @@ def test__alarm__re_inserting_alarm__updates_rather_than_re_inserting(temp_db):
     alarm.target_days = utilities.Days.SUNDAY
 
     temp_db.add_alarm(alarm)
-    
+
     assert len(temp_db.get_alarms()) == 1
 
 
@@ -43,20 +44,20 @@ def test__alarm__re_inserting_alarm__performs_update(temp_db):
     alarm.target_days = utilities.Days.SUNDAY
 
     temp_db.add_alarm(alarm)
-    
+
     result = temp_db.get_alarms()[0].target_days
-    assert  result == utilities.Days.SUNDAY
+    assert result == utilities.Days.SUNDAY
 
 
 def test__alarm_already_inserted__add__adds_another_alarm(temp_db):
     alarm = Alarm()
     alarm.target_days = utilities.Days.MONDAY
     temp_db.add_alarm(alarm)
-   
+
     alarm2 = Alarm()
     alarm2.target_days = utilities.Days.SUNDAY
     temp_db.add_alarm(alarm2)
-    
+
     assert len(temp_db.get_alarms()) == 2
 
 

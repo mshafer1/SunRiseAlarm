@@ -2,7 +2,8 @@
 import os
 
 import sys
-on_windows = 'linux' not in sys.platform
+
+on_windows = "linux" not in sys.platform
 
 
 from database import DB
@@ -11,9 +12,9 @@ from viewModel import ViewModel
 
 
 def clear_screen():
-    command = 'clear'
+    command = "clear"
     if on_windows:
-        command = 'cls'
+        command = "cls"
     os.system(command)
 
 
@@ -31,11 +32,13 @@ def menu(menu_actions):
             menu_actions[keys[converted]]()
         else:
             clear_screen()
-            print("Invalid entry, please enter an integer value between 1 and {0}".format(valid_max))
+            print(
+                "Invalid entry, please enter an integer value between 1 and {0}".format(valid_max)
+            )
 
 
 def add_alarm():
-    db = DB('alarms.json')
+    db = DB("alarms.json")
     db.add_alarm(Alarm())
 
 
@@ -51,7 +54,7 @@ class QuitException(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     menu_items = {
         "Add Alarm": add_alarm,
         "Quit": quit,
@@ -64,4 +67,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         vm.__del__()
         raise
-

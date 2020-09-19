@@ -5,12 +5,12 @@ import utilities
 
 value = platform.platform()
 
-if 'Windows' in value:
+if "Windows" in value:
     # this is a no-op class for testing on Windows platforms
     GPIOLib = utilities._MockController
 
 else:
-    #from gpiozero import PWMLED
+    # from gpiozero import PWMLED
     import pigpio as GPIOLib
 
 
@@ -43,9 +43,9 @@ class LEDController(object):
     @classmethod
     def _scale(cls, percent):
         # this is a scaling based on desired percentage to 8 bit power for linear brightness
-        scaled = .0127 * (percent ** 2) + 1.3027 * percent - 2
+        scaled = 0.0127 * (percent ** 2) + 1.3027 * percent - 2
         scaled = scaled // 1
 
-        scaled = max(0, scaled) # remove negatives
-        scaled = min(255, scaled) # remove high
+        scaled = max(0, scaled)  # remove negatives
+        scaled = min(255, scaled)  # remove high
         return scaled
