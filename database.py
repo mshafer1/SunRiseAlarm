@@ -1,3 +1,5 @@
+import functools
+
 import copy
 from tinydb import TinyDB, Query
 from tinydb_serialization import SerializationMiddleware
@@ -50,9 +52,11 @@ class DB(object):
         alarm = Query()
         matches = self.table.search(alarm.id == store_alarm.id)
         assert len(matches) == 1, "Error, did not find exactly one match"
-        self.db.update(store_alarm.__dict__, alarm.id == store_alarm.id)
+        update_values = {key: value for key, value in store_alarm.__dict__.items()}
+        self.table.update(update_values, alarm.id == store_alarm.id)
 
 
+@functools.total_ordering
 class DBAlarm(Alarm):
     ids = []
 
@@ -80,3 +84,10 @@ class DBAlarm(Alarm):
             value = hash(value) # keep hashing till we find one
             cls.ids.append(value)
         return value
+
+    # for comparison between to objects, consider same if values - including id - are the same
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __lt__(self, other):
+        return self.__dict__ < other.__dict__
