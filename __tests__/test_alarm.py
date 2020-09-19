@@ -1,55 +1,48 @@
+import unittest
+from unittest.mock import patch
+from datetime import datetime
+
+import pytest
+
 from alarm import Alarm
 import utilities
 from utilities import Days
 import config
 
-import unittest
-from unittest.mock import patch
-from datetime import datetime
 
 
-class TestAlarmAddOrRemoveDays(unittest.TestCase):
-    def test_setDay(self):
-        alarm = Alarm()
-        self.assertEqual(Days(0), alarm.target_days)
+@pytest.mark.parametrize("day", Days)
+def test__new_alarm__add_target_day__target_days_matches(day):
+    alarm = Alarm()
 
-        for day in Days:
-            alarm.add_target_day(day)
-            if day is Days(0):
-                self.assertEqual(Days(0), alarm.target_days)
-            else:
-                self.assertNotEqual(Days(0), alarm.target_days)
-            self.assertEqual(day, alarm.target_days)
+    alarm.add_target_day(day)
 
-            # reset
-            alarm.target_days = Days(0)
+    assert day == alarm.target_days
 
-    def test_addDay(self):
-        alarm = Alarm()
-        self.assertEqual(Days(0), alarm.target_days)
 
-        for day in Days:
-            alarm.add_target_day(day)
+# using multiple parametrize tests all combinations
+@pytest.mark.parametrize("day1", Days)
+@pytest.mark.parametrize("day2", Days)
+def test__alarm_with_day__add_target_day__target_days_matches_union(day1,day2):
+    alarm = Alarm()
+    alarm.add_target_day(day1)
 
-            self.assertEqual(day, alarm.target_days & day)  # check it got set
-            if day is not Days(0):
-                self.assertNotEqual(Days(0), alarm.target_days)
+    alarm.add_target_day(day2)
 
-    def test_removeDay(self):
-        alarm = Alarm()
-        alarm.add_target_day(Days.ALL)
-        self.assertEqual(Days.ALL, alarm.target_days)
+    assert all([
+        day1 & alarm.target_days, # day1 flag got set
+        day2 & alarm.target_days, # day2 flag got set
+    ]) 
 
-        for day in Days:
-            if day is Days(0):
-                alarm.remove_target_day(day)
-                self.assertEqual(Days.ALL, alarm.target_days)  # assert removing days that aren't there is a noop
-            else:
-                alarm.remove_target_day(day)
-                self.assertEqual(Days(0), alarm.target_days & day)  # assert that day flag is not set anymore
+@pytest.mark.parametrize("days_set", Days)
+@pytest.mark.parametrize("day_to_remove", Days)
+def test__alarm_with_day_set__remove_target_day__unsets_that_days_flag(days_set, day_to_remove):
+    alarm = Alarm()
+    alarm.add_target_day(days_set)
 
-            # reset it
-            alarm.add_target_day(Days.ALL)
+    alarm.remove_target_day(day_to_remove)
+
+    assert alarm.target_days & day_to_remove == Days(0) # There should be no overlap between still set bits and the day to remove
 
 
 class TestAlarmGetNextDay(unittest.TestCase):
