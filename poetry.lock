@@ -264,6 +264,18 @@ testing = ["fields", "hunter", "process-tests (2.0.2)", "six", "virtualenv"]
 
 [[package]]
 category = "dev"
+description = "Wrap tests with fixtures in freeze_time"
+name = "pytest-freezegun"
+optional = false
+python-versions = "*"
+version = "0.4.2"
+
+[package.dependencies]
+freezegun = ">0.3"
+pytest = ">=3.0.0"
+
+[[package]]
+category = "dev"
 description = "Thin-wrapper around the mock package for easier use with py.test"
 name = "pytest-mock"
 optional = false
@@ -366,7 +378,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "bd09957b416aea6aba3ec5c41cfa714adc7c3a03287ad35bd620f332d7d12d71"
+content-hash = "2b18a031de609590057d55ed9837b88dbd96e1b391b841fdd53caf1508319c37"
 lock-version = "1.0"
 python-versions = "^3.5"
 
@@ -525,6 +537,10 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-2.7.1.tar.gz", hash = "sha256:e00ea4fdde970725482f1f35630d12f074e121a23801aabf2ae154ec6bdd343a"},
     {file = "pytest_cov-2.7.1-py2.py3-none-any.whl", hash = "sha256:2b097cde81a302e1047331b48cadacf23577e431b61e9c6f49a1170bbe3d3da6"},
+]
+pytest-freezegun = [
+    {file = "pytest-freezegun-0.4.2.zip", hash = "sha256:19c82d5633751bf3ec92caa481fb5cffaac1787bd485f0df6436fd6242176949"},
+    {file = "pytest_freezegun-0.4.2-py2.py3-none-any.whl", hash = "sha256:5318a6bfb8ba4b709c8471c94d0033113877b3ee02da5bfcd917c1889cde99a7"},
 ]
 pytest-mock = [
     {file = "pytest-mock-2.0.0.tar.gz", hash = "sha256:b35eb281e93aafed138db25c8772b95d3756108b601947f89af503f8c629413f"},
