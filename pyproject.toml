@@ -8,6 +8,29 @@ license = "MIT"
 [tool.pytest.ini_options]
 addopts = "--cov=. --cov-report term"
 
+[tool.black]
+line-length = 100
+target-version = ['py36']
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | \_env3.7
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
 [tool.poetry.dependencies]
 python = "^3.5"
 pigpio = "1.44"
