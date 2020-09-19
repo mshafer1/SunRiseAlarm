@@ -31,12 +31,19 @@ def test_led_controller_sets_led(value):
     assert expected == controller.value_raw
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-V', dest="verbosity", action='count', default=0, help="Increase the level of logging output")
-    args = parser.parse_args()
-    verbosity = ['-v'] * args.verbosity
 
-    pytest_args = [__file__, '-l'] + verbosity
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-V",
+        dest="verbosity",
+        action="count",
+        default=0,
+        help="Increase the level of logging output",
+    )
+    args = parser.parse_args()
+    verbosity = ["-v"] * args.verbosity
+
+    pytest_args = [__file__, "-l"] + verbosity
     pytest.main(pytest_args)
